@@ -30,9 +30,9 @@ class EventPipelineFlowSpec extends StreamFlowSpec {
 
       val result = Await.result(output, 1000.millis)
 
-      result should have size (1)
-      result(0).headers should contain key ("starting")
-      result(0) should be equals (messages(0))
+      result should have size 1
+      result.head.headers should contain key ("starting")
+      result.head should be equals messages.head
     }
 
     "Have messages in the successful output" in withMessage(sessionHeaders) { message =>
@@ -51,7 +51,6 @@ class EventPipelineFlowSpec extends StreamFlowSpec {
       intercept[NoSuchElementException] {
         Await.result(eventDeletedLogger, 1000.millis)
       }
-
     }
 
     val golfEvent = Event(1, "GOLF", "one", "zero")
@@ -93,7 +92,5 @@ class EventPipelineFlowSpec extends StreamFlowSpec {
         Await.result(eventTypeSuppressed, 1000.millis)
       }
     }
-
   }
-
 }
