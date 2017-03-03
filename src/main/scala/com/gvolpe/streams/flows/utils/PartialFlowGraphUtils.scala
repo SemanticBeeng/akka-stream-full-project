@@ -1,8 +1,8 @@
 package com.gvolpe.streams.flows.utils
 
 import akka.stream.UniformFanOutShape
-import akka.stream.scaladsl.FlowGraph.Implicits._
-import akka.stream.scaladsl.{Broadcast, Flow, FlowGraph}
+import akka.stream.scaladsl.GraphDSL.Implicits._
+import akka.stream.scaladsl.{Broadcast, Flow, GraphDSL}
 import com.gvolpe.streams.flows.{FlowMessage, MessageHeader}
 
 object PartialFlowGraphUtils {
@@ -11,7 +11,7 @@ object PartialFlowGraphUtils {
 
   def partialFlowWithHeader(header: MessageHeader) = partialFlow(e => addHeader(e, header))
 
-  def filterPartialFlowGraph(filterFunction: FlowMessage => Boolean) = FlowGraph.create() { implicit b =>
+  def filterPartialFlowGraph(filterFunction: FlowMessage => Boolean) = GraphDSL.create() { implicit b =>
     val bcast = b.add(Broadcast[FlowMessage](2))
     val filter = b.add(Flow[FlowMessage] filter (filterFunction(_)))
     val notFilter = b.add(Flow[FlowMessage] filter (!filterFunction(_)))

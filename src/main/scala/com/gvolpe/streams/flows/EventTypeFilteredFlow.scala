@@ -1,20 +1,20 @@
 package com.gvolpe.streams.flows
 
 import akka.stream.FlowShape
-import akka.stream.scaladsl.FlowGraph
-import akka.stream.scaladsl.FlowGraph.Implicits._
+import akka.stream.scaladsl.GraphDSL
+import akka.stream.scaladsl.GraphDSL.Implicits._
 import com.gvolpe.streams.flows.TransformerFlows._
 import com.gvolpe.streams.flows.utils.PartialFlowGraphUtils._
 
 trait EventTypeFilteredFlow {
 
-  lazy val eventTypeFilteredFlow = FlowGraph.create() { implicit b =>
+  lazy val eventTypeFilteredFlow = GraphDSL.create() { implicit b =>
     val logger = b.add(partialFlowWithHeader(MessageHeader("suppressed", "EventTypeFilter")))
     val sender = b.add(partialFlow(sendToExternalService(_)))
 
     logger ~> sender
 
-    FlowShape(logger.inlet, sender.outlet)
+    FlowShape(logger.in, sender.outlet)
   }.named("eventTypeFilteredFlow")
 
 }

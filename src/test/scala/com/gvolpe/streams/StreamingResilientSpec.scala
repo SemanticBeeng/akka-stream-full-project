@@ -3,8 +3,8 @@ package com.gvolpe.streams
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.pattern.ask
 import akka.stream._
-import akka.stream.scaladsl.FlowGraph.Implicits._
-import akka.stream.scaladsl.{FlowGraph, Keep, Sink, Source}
+import akka.stream.scaladsl.GraphDSL.Implicits._
+import akka.stream.scaladsl.{GraphDSL, Keep, Sink, Source}
 import akka.testkit.TestKit
 import akka.util.Timeout
 import com.gvolpe.streams.flows.utils.PartialFlowGraphUtils._
@@ -28,14 +28,14 @@ class StreamingResilientSpec extends TestKit(ActorSystem("StreamingResilientSpec
   private val restartingDecider = ActorAttributes.withSupervisionStrategy(Supervision.restartingDecider)
   private val actorSource = Source.actorRef(100, OverflowStrategy.dropHead)
 
-  private val failureFlow = FlowGraph.create() { implicit b  =>
+  private val failureFlow = GraphDSL.create() { implicit b  =>
     val f1 = b.add(partialFlowWithHeader(MessageHeader("f1", "value1")))
     val f2 = b.add(partialFlow(generateException(_)))
     val f3 = b.add(partialFlowWithHeader(MessageHeader("f3", "value3")))
 
     f1 ~> f2 ~> f3
 
-    FlowShape(f1.inlet, f3.outlet)
+    FlowShape(f1.in, f3.outlet)
   }.withAttributes(restartingDecider)
 
   private def generateException(message: FlowMessage): FlowMessage = {

@@ -1,14 +1,14 @@
 package com.gvolpe.streams.flows
 
 import akka.stream.UniformFanOutShape
-import akka.stream.scaladsl.FlowGraph.Implicits._
+import akka.stream.scaladsl.GraphDSL.Implicits._
 import akka.stream.scaladsl._
 import com.gvolpe.streams.flows.TransformerFlows._
 import com.gvolpe.streams.flows.utils.PartialFlowGraphUtils._
 
 trait EventProcessorFlow {
 
-  lazy val eventProcessorFlow = FlowGraph.create() { implicit b =>
+  lazy val eventProcessorFlow = GraphDSL.create() { implicit b =>
     val filteredMerge = b.add(Merge[FlowMessage](2))
 
     val originFilterFlow = b.add(filterPartialFlowGraph(_.event.origin == "providerName"))
