@@ -7,6 +7,9 @@
 *.vim
 */project/boot
 */project/build/target
+./.project/.ivy
+./.project/.sbtboot
+./.project/.boot
 */project/project.target.config-classes
 *-shim.sbt
 *~
