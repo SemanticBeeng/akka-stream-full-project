@@ -15,7 +15,7 @@ class EventProcessorFlowSpec extends StreamFlowSpec {
 
     "Have messages in the sender output" in withMessage(sessionHeaders) { message =>
 
-      val (senderOut, eventLoggerOut) = FlowTestKit().graph2_(EventProcessorMock.eventProcessorFlow, message)
+      val (senderOut, eventLoggerOut) = FlowTestKit().graph2(EventProcessorMock.eventProcessorFlow, message)
 
       // Should be an Empty stream
       intercept[NoSuchElementException] {
