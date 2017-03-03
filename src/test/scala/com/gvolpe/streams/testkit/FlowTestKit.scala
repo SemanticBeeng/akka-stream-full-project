@@ -1,5 +1,6 @@
 package com.gvolpe.streams.testkit
 
+import akka.NotUsed
 import akka.stream._
 import akka.stream.scaladsl.GraphDSL.Implicits._
 import akka.stream.scaladsl._
@@ -15,31 +16,31 @@ private[testkit] class FlowTestKit[T](implicit materializer: Materializer) {
   private def sink[T]: Sink[T, Future[T]] = Flow[T].toMat(Sink.head)(Keep.right)
   private def sinkSeq[T]: Sink[T, Future[Seq[T]]] = Flow[T].grouped(100).toMat(Sink.head)(Keep.right)
 
-  def runnable[T, M](closedGraph: Graph[ClosedShape.type, M]): M = {
+  def runnable[M](closedGraph: Graph[ClosedShape.type, M]): M = {
     RunnableGraph.fromGraph(closedGraph).run()
   }
 
-  def graphSeq[T](flow: Graph[FlowShape[T, T], Unit], messageList: List[T]): Future[Seq[T]] = {
+  def graphSeq(flow: Graph[FlowShape[T, T], Unit], messageList: List[T]): Future[Seq[T]] = {
     graphSeq(flow, Source(messageList))
   }
 
-  def graphSeq[T](flow: Graph[FlowShape[T, T], Unit], source: Source[T, Unit]): Future[Seq[T]] = {
+  def graphSeq(flow: Graph[FlowShape[T, T], Unit], source: Source[T, NotUsed]): Future[Seq[T]] = {
     source.via(flow).runWith(sinkSeq[T])
   }
 
-  def graph[T](flow: Graph[FlowShape[T, T], Unit], message: T): Future[T] = {
+  def graph(flow: Graph[FlowShape[T, T], Unit], message: T): Future[T] = {
     graph(flow, Source.single(message))
   }
 
-  def graph[T](flow: Graph[FlowShape[T, T], Unit], source: Source[T, Unit]): Future[T] = {
+  def graph(flow: Graph[FlowShape[T, T], Unit], source: Source[T, NotUsed]): Future[T] = {
     source.via(flow).runWith(sink[T])
   }
 
-  def graph2[T](flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T]) = {
+  def graph2(flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T]) = {
     graph2(flow, Source.single(message))
   }
 
-  def graph2[T](flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, Unit]): (Future[T], Future[T]) = runnable {
+  def graph2(flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, NotUsed]): (Future[T], Future[T]) = runnable {
     GraphDSL.create(sink[T], sink[T])((_, _)) { implicit b => (out0, out1) =>
       val inputFlow: UniformFanOutShape[T, T] = b.add(flow)
       source ~> inputFlow
@@ -49,11 +50,11 @@ private[testkit] class FlowTestKit[T](implicit materializer: Materializer) {
     }
   }
 
-  def graph3[T](flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T]) = {
+  def graph3(flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T]) = {
     graph3(flow, Source.single(message))
   }
 
-  def graph3[T](flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, Unit]): (Future[T], Future[T], Future[T]) = runnable {
+  def graph3(flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, NotUsed]): (Future[T], Future[T], Future[T]) = runnable {
     GraphDSL.create(sink[T], sink[T], sink[T])((_, _, _)) { implicit b => (out0, out1, out2) =>
       val inputFlow: UniformFanOutShape[T, T] = b.add(flow)
       source ~> inputFlow
@@ -64,11 +65,11 @@ private[testkit] class FlowTestKit[T](implicit materializer: Materializer) {
     }
   }
 
-  def graph4[T](flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T], Future[T]) = {
+  def graph4(flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T], Future[T]) = {
     graph4(flow, Source.single(message))
   }
 
-  def graph4[T](flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, Unit]): (Future[T], Future[T], Future[T], Future[T]) = runnable {
+  def graph4(flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, NotUsed]): (Future[T], Future[T], Future[T], Future[T]) = runnable {
     GraphDSL.create(sink[T], sink[T], sink[T], sink[T])((_, _, _, _)) { implicit b => (out0, out1, out2, out3) =>
       val inputFlow: UniformFanOutShape[T, T] = b.add(flow)
       source ~> inputFlow
@@ -80,11 +81,11 @@ private[testkit] class FlowTestKit[T](implicit materializer: Materializer) {
     }
   }
 
-  def graph5[T](flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T], Future[T], Future[T]) = {
+  def graph5(flow: Graph[UniformFanOutShape[T, T], Unit], message: T): (Future[T], Future[T], Future[T], Future[T], Future[T]) = {
     graph5(flow, Source.single(message))
   }
 
-  def graph5[T](flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, Unit]): (Future[T], Future[T], Future[T], Future[T], Future[T]) = runnable {
+  def graph5(flow: Graph[UniformFanOutShape[T, T], Unit], source: Source[T, NotUsed]): (Future[T], Future[T], Future[T], Future[T], Future[T]) = runnable {
     GraphDSL.create(sink[T], sink[T], sink[T], sink[T], sink[T])((_, _, _, _, _)) { implicit b => (out0, out1, out2, out3, out4) =>
       val inputFlow: UniformFanOutShape[T, T] = b.add(flow)
       source ~> inputFlow

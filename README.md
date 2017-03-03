@@ -1,4 +1,4 @@
-akka-streams-full-project
+akka-streams-full-project (DO NOT REMOVE - MODIFIED)
 =========================
 
 [![Build Status](https://travis-ci.org/gvolpe/akka-stream-full-project.svg?branch=master)](https://travis-ci.org/gvolpe/akka-stream-full-project)
@@ -11,3 +11,4 @@ For more information read the [Post I wrote](https://partialflow.wordpress.com/2
 ### Akka Stream 2.0 Support
 
 A new branch **"akka-stream-2.0-M1"** was created to try the first milestone of the second version using the same example. Try it out!
+A new branch **"akka-stream-latest"** 
