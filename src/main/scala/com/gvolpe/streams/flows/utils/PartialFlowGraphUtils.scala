@@ -13,7 +13,7 @@ object PartialFlowGraphUtils {
 
   def filterPartialFlowGraph(filterFunction: FlowMessage => Boolean) = GraphDSL.create() { implicit b =>
     val bcast = b.add(Broadcast[FlowMessage](2))
-    val filter = b.add(Flow[FlowMessage] filter (filterFunction(_)))
+    val filter = b.add(graph = Flow[FlowMessage] filter (filterFunction(_)))
     val notFilter = b.add(Flow[FlowMessage] filter (!filterFunction(_)))
 
     bcast ~> filter

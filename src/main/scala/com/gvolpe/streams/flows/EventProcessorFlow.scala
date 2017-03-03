@@ -13,8 +13,8 @@ trait EventProcessorFlow {
 
     val originFilterFlow = b.add(filterPartialFlowGraph(_.event.origin == "providerName"))
     val destFilterFlow = b.add(filterPartialFlowGraph(_.event.destination == "destName"))
-    val eventProcessor = b.add(partialFlow(process(_)))
-    val sender = b.add(partialFlow(sendProcessedEvent(_)))
+    val eventProcessor = b.add(partialFlow(process))
+    val sender = b.add(partialFlow(sendProcessedEvent))
     val originLogger = b.add(partialFlow({ m => println(s"Origin Filtered: $m"); m }))
     val destLogger = b.add(partialFlow({ m => println(s"Destination Filtered: $m"); m }))
     val eventLogger = b.add(partialFlow({ m => println(s"Event Filtered: $m"); m }))
@@ -27,5 +27,4 @@ trait EventProcessorFlow {
 
     UniformFanOutShape(originFilterFlow.in, sender.outlet, eventLogger.outlet)
   }.named("eventProcessorFlow")
-
 }
